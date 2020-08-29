@@ -21,7 +21,7 @@ def createGrid(gridView):
 
 
 
-def drawGrid(grid,nextblock,bait):
+def drawGrid(grid,nextblock,bait,snake):
     global EATEN
     EATEN = False
 
@@ -29,12 +29,17 @@ def drawGrid(grid,nextblock,bait):
         for y in range(len(grid[x])):
             rect = grid[x][y]
 
+            
+
             if x == nextblock[0] and y == nextblock[1]:
-                pygame.draw.rect(SCREEN,(0, 0, 0),rect,0)
+                pygame.draw.rect(SCREEN,(255, 0, 0),rect,0)
             elif x == bait[0] and y == bait[1]:
                 pygame.draw.rect(SCREEN,(43, 0, 255),rect,0)
             else:
-                pygame.draw.rect(SCREEN,(255, 0, 0),rect,0)
+                pygame.draw.rect(SCREEN,(255, 255, 255),rect,0)
+            for i in range(len(snake)-1):
+                if x == snake[i][0] and y == snake[i][1]:
+                    pygame.draw.rect(SCREEN,(0, 0, 0),rect,0)
 
 
 def directionCheck(direction,currentblock):
@@ -73,8 +78,10 @@ def createBait():
 def main():
     global SCREEN,CLOCK,EATEN
     EATEN = False
+    snake = []
+    snake.append([])
     grid = []
-    currentblock = [0 , 0]
+    snake[0] = [0 , 0]
     nextblock = [0 , 0]
     bait = [0 , 0]
     bait = createBait()
@@ -97,24 +104,27 @@ def main():
             direction = "up"
         if pygame.key.get_pressed()[pygame.K_DOWN]:
             direction = "down"
+        for i in reversed(range(len(snake)-1)):
+            if  i == 0:
+                break
+            snake[i] = snake[i-1]
         
         
 
 
-        point = directionCheck(direction,currentblock)
+        point = directionCheck(direction,snake[0])
         nextblock = point
 
         CLOCK.tick(10)
         if EATEN:
             bait = createBait()
             SCORE += 1
-        print(bait)
         SCREEN.fill((255,255,255))
         scoretext = STAT_FONT.render("SCORE : ",1,(0,0,0))
         SCREEN.blit(scoretext, (0,WINDOW_HEIGHT+10) )
         scoreNumber = STAT_FONT.render(str(SCORE),1,(0,0,0))
         SCREEN.blit(scoreNumber, (150,WINDOW_HEIGHT+10) )
-        drawGrid(grid,nextblock,bait)
+        drawGrid(grid,nextblock,bait,snake)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -123,9 +133,10 @@ def main():
       
         pygame.display.update()
 
-        if currentblock[0] == bait[0] and currentblock[1] == bait[1]:
+        if snake[0][0] == bait[0] and snake[0][1] == bait[1]:
             EATEN = True
-        currentblock = nextblock
+            snake.append([])
+        snake[0] = nextblock
 
 
 main()
