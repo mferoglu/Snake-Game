@@ -15,11 +15,12 @@ def drawGrid():
     for x in range(WINDOW_WIDTH):
         for y in range(WINDOW_HEIGHT):
             rect = pygame.Rect(x*blockSize,y*blockSize,blockSize,blockSize)
-            cursor = pyautogui.position()
+            cursor = pygame.mouse.get_pos()
             if cursor[0] > x*blockSize and cursor[0] < x*blockSize+blockSize and cursor[1] > y*blockSize and cursor[1] < y*blockSize+blockSize :
-                pygame.Surface.fill(pygame.Color("blue"),rect)
-            
-            pygame.draw.rect(SCREEN,(255, 0, 0),rect,0)
+                #pygame.Surface.fill(pygame.Color("blue"),rect)
+                pygame.draw.rect(SCREEN,(0, 0, 0),rect,0)
+            else:
+                pygame.draw.rect(SCREEN,(255, 0, 0),rect,0)
 
 
 def main():
@@ -29,6 +30,7 @@ def main():
     CLOCK = pygame.time.Clock()
     #SCREEN.fill((0,0,0))
     while True:
+        CLOCK.tick(30)
         drawGrid()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
